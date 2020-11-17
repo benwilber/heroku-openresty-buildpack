@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# bin/compile BUILD_DIR CACHE_DIR ENV_DIR
+set -euo pipefail
+
+BUILD_DIR="$1"
+
+curl -sL https://openresty.org/package/pubkey.gpg | apt-key add -
+echo "deb http://openresty.org/package/ubuntu $(lsb_release -sc) main" | \
+  tee /etc/apt/sources.list.d/openresty.list
+apt update
+apt -y install openresty luarocks libssl-dev python3-jinja2
+
+version=$(dpkg -s openresty | grep ^Version | awk '{print $NF}')
+echo "-----> openresty-buildpack: Installed $version"
+cp -a bin/startopenresty "$BUILD_DIR/bin"
+echo "-----> openresty-buildpack: Installed startopenresty to app/bin"

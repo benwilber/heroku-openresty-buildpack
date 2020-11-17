@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# bin/detect BUILD_DIR
+echo openresty
