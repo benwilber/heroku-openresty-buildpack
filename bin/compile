@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # bin/compile BUILD_DIR CACHE_DIR ENV_DIR
-set -euo pipefail
+set -euo pipefail -x
 
 
 
@@ -10,6 +10,7 @@ ENV_DIR="$3"
 OPENRESTY_DIR="$BUILD_DIR/openresty"
 
 export PATH="$PATH:$OPENRESTY_DIR/openresty/bin:$OPENRESTY_DIR/openresty/luajit/bin"
+echo "$PATH"
 
 echo_header() {
   echo "-----> OpenResty: $1"
