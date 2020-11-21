@@ -18,7 +18,7 @@ echo_indented() {
 echo_header "Installing .profile.d scripts"
 find .profile.d -name "*.sh" | \
   while read path; do
-    echo_indended $(cp -v "$path" "$BUILD_DIR/.profile.d")
+    echo_indented $(cp -v "$path" "$BUILD_DIR/.profile.d")
   done
 
 mkdir -p "$OPENRESTY_DIR"
