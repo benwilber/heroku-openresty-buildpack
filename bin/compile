@@ -9,7 +9,7 @@ CACHE_DIR="$2"
 ENV_DIR="$3"
 OPENRESTY_DIR="$BUILD_DIR/openresty"
 
-export PATH="$PATH:$OPENRESTY_DIR/openresty/bin:$OPENRESTY_DIR/openresty/luajit/bin"
+export PATH="$PATH:$OPENRESTY_DIR/bin:$OPENRESTY_DIR/luajit/bin"
 echo "$PATH"
 
 echo_header() {
