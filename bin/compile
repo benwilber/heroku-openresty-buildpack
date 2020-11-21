@@ -2,6 +2,8 @@
 # bin/compile BUILD_DIR CACHE_DIR ENV_DIR
 set -euo pipefail
 
+export PATH="$PATH:$HOME/openresty/bin:$HOME/openresty/luajit/bin"
+
 BUILD_DIR="$1"
 CACHE_DIR="$2"
 ENV_DIR="$3"
@@ -14,13 +16,6 @@ echo_header() {
 echo_indented() {
   echo "       $1"
 }
-
-echo_header "Installing .profile.d scripts"
-mkdir -p "$BUILD_DIR/.profile.d"
-find .profile.d -name "*.sh" | \
-  while read path; do
-    echo_indented $(cp -av "$path" "$BUILD_DIR/.profile.d/$(basename "$path")")
-  done
 
 mkdir -p "$OPENRESTY_DIR"
 tar -zxf "openresty-$STACK".tar.gz -C "$OPENRESTY_DIR"
