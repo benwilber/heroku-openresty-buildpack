@@ -15,6 +15,12 @@ echo_indented() {
   echo "       $1"
 }
 
+echo_header "Installing .profile.d scripts"
+find .profile.d -name "*.sh" | \
+  while read path; do
+    echo_indended $(cp -v "$path" "$BUILD_DIR/.profile.d")
+  done
+
 mkdir -p "$OPENRESTY_DIR"
 tar -zxf "openresty-$STACK".tar.gz -C "$OPENRESTY_DIR"
 
@@ -28,9 +34,3 @@ if [[ -f "$BUILD_DIR/opm.txt" ]]; then
     echo_indented "$line"
   done
 fi
-
-echo_header "Installing .profile.d scripts"
-find .profile.d -name "*.sh" | \
-  while read path; do
-    echo_indended $(cp -v "$path" "$BUILD_DIR/.profile.d")
-  done
