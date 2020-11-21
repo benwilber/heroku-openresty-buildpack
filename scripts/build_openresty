@@ -59,7 +59,8 @@ echo "Downloading $luarocks_tarball_url"
   make install
 )
 
-$OPENRESTY_DIR/luarocks/bin/luarocks install lapis
+$OPENRESTY_DIR/bin/opm get thibaultcha/lua-resty-jit-uuid 3scale/lua-resty-url cdbattags/lua-resty-jwt ledgetech/lua-resty-http
+$OPENRESTY_DIR/luarocks/bin/luarocks install lapis lua-resty-fernet
 
 echo "openresty/${OPENRESTY_VERSION}" > "$OPENRESTY_DIR/version.txt"
 tar -zcvf /tmp/openresty-"${STACK}".tar.gz -C "$OPENRESTY_DIR" .

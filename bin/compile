@@ -24,12 +24,3 @@ mkdir -p "$OPENRESTY_DIR"
 tar -zxf "openresty-$STACK".tar.gz -C "$OPENRESTY_DIR"
 
 echo_header "Installed $(cat $OPENRESTY_DIR/version.txt)"
-
-if [[ -f "$BUILD_DIR/opm.txt" ]]; then
-  echo_header "Installing OPM packages from opm.txt"
-
-  xargs "$OPENRESTY_DIR/bin/opm" get < "$BUILD_DIR/opm.txt" 2>&1 | \
-  while read line; do
-    echo_indented "$line"
-  done
-fi
