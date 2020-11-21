@@ -12,5 +12,6 @@ tar -zxf "openresty-$STACK".tar.gz -C "$OPENRESTY_DIR"
 
 echo "-----> openresty: Installed $(cat $OPENRESTY_DIR/version.txt)"
 
-cp bin/startopenresty "$BUILD_DIR/openresty/bin"
-echo "-----> openresty: Added startopenresty to openresty/bin"
+if [[ -f "$BUILD_DIR/opm.txt" ]]; then
+    xargs "$OPENRESTY_DIR/bin/opm" get < "$BUILD_DIR/opm.txt"
+fi
