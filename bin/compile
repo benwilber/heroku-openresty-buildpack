@@ -2,12 +2,14 @@
 # bin/compile BUILD_DIR CACHE_DIR ENV_DIR
 set -euo pipefail
 
-export PATH="$PATH:$HOME/openresty/bin:$HOME/openresty/luajit/bin"
+
 
 BUILD_DIR="$1"
 CACHE_DIR="$2"
 ENV_DIR="$3"
 OPENRESTY_DIR="$BUILD_DIR/openresty"
+
+export PATH="$PATH:$OPENRESTY_DIR/openresty/bin:$OPENRESTY_DIR/openresty/luajit/bin"
 
 echo_header() {
   echo "-----> OpenResty: $1"
