@@ -8,7 +8,7 @@ ENV_DIR="$3"
 OPENRESTY_DIR=/tmp/openresty
 OPENRESTY_BIN="$OPENRESTY_DIR/bin/openresty"
 
-mkdir -p "$OPENRESTY_DIR"
+mkdir "$OPENRESTY_DIR"
 tar -zxvf "openresty-$STACK".tgz -C "$OPENRESTY_DIR"
 
 nginx_version=$("OPENRESTY_BIN" -V 2>&1 | head -1 | awk '{print $NF}')
