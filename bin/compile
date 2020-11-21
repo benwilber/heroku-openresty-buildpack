@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # bin/compile BUILD_DIR CACHE_DIR ENV_DIR
-set -euo pipefail -x
+set -euo pipefail
 
 BUILD_DIR="$1"
 CACHE_DIR="$2"
@@ -8,7 +8,7 @@ ENV_DIR="$3"
 OPENRESTY_DIR="$BUILD_DIR/openresty"
 
 mkdir -p "$OPENRESTY_DIR"
-tar -zxvf "openresty-$STACK".tar.gz -C "$OPENRESTY_DIR"
+tar -zxf "openresty-$STACK".tar.gz -C "$OPENRESTY_DIR"
 
 echo "-----> openresty: Installed $(cat $OPENRESTY_DIR/version.txt)"
 

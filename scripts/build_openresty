@@ -59,6 +59,8 @@ echo "Downloading $luarocks_tarball_url"
   make install
 )
 
+$OPENRESTY_DIR/luarocks/bin/luarocks install lapis
+
 echo "openresty/${OPENRESTY_VERSION}" > "$OPENRESTY_DIR/version.txt"
 tar -zcvf /tmp/openresty-"${STACK}".tar.gz -C "$OPENRESTY_DIR" .
 cp /tmp/openresty-"${STACK}".tar.gz "$1"
