@@ -11,7 +11,7 @@ OPENRESTY_BIN="$OPENRESTY_DIR/bin/openresty"
 mkdir "$OPENRESTY_DIR"
 tar -zxvf "openresty-$STACK".tgz -C "$OPENRESTY_DIR"
 
-nginx_version=$("OPENRESTY_BIN" -V 2>&1 | head -1 | awk '{print $NF}')
+nginx_version=$("$OPENRESTY_BIN" -V 2>&1 | head -1 | awk '{print $NF}')
 echo "-----> openresty: Installed ${nginx_version} to app/bin"
 cp bin/startopenresty "$BUILD_DIR/bin"
 chmod +x "$BUILD_DIR/bin/startopenresty"
