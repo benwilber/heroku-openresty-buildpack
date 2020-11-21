@@ -7,11 +7,30 @@ CACHE_DIR="$2"
 ENV_DIR="$3"
 OPENRESTY_DIR="$BUILD_DIR/openresty"
 
+echo_header() {
+  echo "-----> OpenResty: $1"
+}
+
+echo_indented() {
+  echo "       $1"
+}
+
 mkdir -p "$OPENRESTY_DIR"
 tar -zxf "openresty-$STACK".tar.gz -C "$OPENRESTY_DIR"
 
-echo "-----> openresty: Installed $(cat $OPENRESTY_DIR/version.txt)"
+echo_header "Installed $(cat $OPENRESTY_DIR/version.txt)"
 
 if [[ -f "$BUILD_DIR/opm.txt" ]]; then
-    xargs "$OPENRESTY_DIR/bin/opm" get < "$BUILD_DIR/opm.txt"
+  echo_header "Installing OPM packages from opm.txt"
+
+  xargs "$OPENRESTY_DIR/bin/opm" get < "$BUILD_DIR/opm.txt" 2>&1 | \
+  while read line; do
+    echo_indented "$line"
+  done
 fi
+
+echo_header "Installing .profile.d scripts"
+find .profile.d -name "*.sh" | \
+  while read path; do
+    echo_indended $(cp -v "$path" "$BUILD_DIR/.profile.d")
+  done
