@@ -3,14 +3,16 @@
 set -euo pipefail
 
 BUILD_DIR="$1"
+CACHE_DIR="$2"
+ENV_DIR="$3"
+OPENRESTY_DIR=/tmp/openresty
+OPENRESTY_BIN="$OPENRESTY_DIR/bin/openresty"
 
-curl -sL https://openresty.org/package/pubkey.gpg | apt-key add -
-echo "deb http://openresty.org/package/ubuntu $(lsb_release -sc) main" | \
-  tee /etc/apt/sources.list.d/openresty.list
-apt update
-apt -y install openresty luarocks libssl-dev python3-jinja2
+mkdir -p "$OPENRESTY_DIR"
+tar -zxvf "openresty-$STACK".tgz -C "$OPENRESTY_DIR"
 
-version=$(dpkg -s openresty | grep ^Version | awk '{print $NF}')
-echo "-----> openresty-buildpack: Installed $version"
-cp -a bin/startopenresty "$BUILD_DIR/bin"
-echo "-----> openresty-buildpack: Installed startopenresty to app/bin"
+nginx_version=$("OPENRESTY_BIN" -V 2>&1 | head -1 | awk '{print $NF}')
+echo "-----> openresty: Installed ${nginx_version} to app/bin"
+cp bin/startopenresty "$BUILD_DIR/bin"
+chmod +x "$BUILD_DIR/bin/startopenresty"
+echo "-----> openresty: Added startopenresty to app/bin"

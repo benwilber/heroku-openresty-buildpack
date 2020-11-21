@@ -1,0 +1,60 @@
+#!/bin/bash
+# Build NGINX and modules for Heroku.
+# This script is designed to run in a Heroku Stack Docker
+# image. More information on the Heroku Stack can be found
+# at https://devcenter.heroku.com/articles/stack
+
+OPENRESTY_VERSION=${OPENRESTY_VERSION-1.19.3.1}
+PCRE_VERSION=${PCRE_VERSION-8.44}
+ZLIB_VERSION=${ZLIB_VERSION-1.2.11}
+UUID4_VERSION=${UUID4_VERSION-master}
+LUAROCKS_VERSION=${LUAROCKS_VERSION-3.4.0}
+
+openresty_tarball_url=https://openresty.org/download/openresty-${OPENRESTY_VERSION}.tar.gz
+pcre_tarball_url=https://ftp.pcre.org/pub/pcre/pcre-${PCRE_VERSION}.tar.gz
+uuid4_url=https://github.com/cybozu/nginx-uuid4-module/archive/${UUID4_VERSION}.tar.gz
+zlib_url=http://zlib.net/zlib-${ZLIB_VERSION}.tar.gz
+luarocks_tarball_url=https://github.com/luarocks/luarocks/archive/v${LUAROCKS_VERSION}.tar.gz
+
+temp_dir=$(mktemp -d /tmp/openresty.XXXXXXXXXX)
+
+cd $temp_dir
+echo "Temp dir: $temp_dir"
+
+echo "Downloading $openresty_tarball_url"
+curl -L $openresty_tarball_url | tar xzv
+
+echo "Downloading $pcre_tarball_url"
+(cd openresty-${OPENRESTY_VERSION} && curl -L $pcre_tarball_url | tar xvz )
+
+echo "Downloading $zlib_url"
+(cd openresty-${OPENRESTY_VERSION} && curl -L $zlib_url | tar xvz )
+
+echo "Downloading $uuid4_url"
+(cd openresty-${OPENRESTY_VERSION} && curl -L $uuid4_url | tar xvz )
+
+echo "Downloading $luarocks_tarball_url"
+(cd openresty-${OPENRESTY_VERSION} && curl -L $luarocks_tarball_url | tar xvz )
+
+
+# This will build `openresty` and `luarocks`
+(
+  cd openresty-${OPENRESTY_VERSION}
+  ./configure \
+    --with-pcre=pcre-${PCRE_VERSION} \
+    --with-zlib=zlib-${ZLIB_VERSION} \
+    --with-http_gzip_static_module \
+    --with-http_realip_module \
+    --with-http_ssl_module \
+    --prefix=/tmp/openresty \
+    --add-module=${temp_dir}/openresty-${OPENRESTY_VERSION}/nginx-uuid4-module-${UUID4_VERSION}
+  make install
+  ls -la
+  cd luarocks-${LUAROCKS_VERSION}
+  ./configure --prefix=/tmp/openresty/luarocks --with-lua=/tmp/openresty/luajit
+  make
+  make install
+)
+
+tar -zcvf /tmp/openresty-"${STACK}".tgz -C /tmp/openresty .
+cp /tmp/openresty-"${STACK}".tgz $1

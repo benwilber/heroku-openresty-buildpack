@@ -1,0 +1,76 @@
+#!/bin/bash
+# Build NGINX and modules for Heroku.
+# This script is designed to run in a Heroku Stack Docker
+# image. More information on the Heroku Stack can be found
+# at https://devcenter.heroku.com/articles/stack
+
+NGINX_VERSION=${NGINX_VERSION-1.18.0}
+PCRE_VERSION=${PCRE_VERSION-8.44}
+HEADERS_MORE_VERSION=${HEADERS_MORE_VERSION-0.33}
+ZLIB_VERSION=${ZLIB_VERSION-1.2.11}
+UUID4_VERSION=${UUID4_VERSION-master}
+
+nginx_tarball_url=https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz
+pcre_tarball_url=https://ftp.pcre.org/pub/pcre/pcre-${PCRE_VERSION}.tar.gz
+headers_more_nginx_module_url=https://github.com/openresty/headers-more-nginx-module/archive/v${HEADERS_MORE_VERSION}.tar.gz
+uuid4_url=https://github.com/cybozu/nginx-uuid4-module/archive/${UUID4_VERSION}.tar.gz
+zlib_url=http://zlib.net/zlib-${ZLIB_VERSION}.tar.gz
+
+temp_dir=$(mktemp -d /tmp/nginx.XXXXXXXXXX)
+
+cd $temp_dir
+echo "Temp dir: $temp_dir"
+
+echo "Downloading $nginx_tarball_url"
+curl -L $nginx_tarball_url | tar xzv
+
+echo "Downloading $pcre_tarball_url"
+(cd nginx-${NGINX_VERSION} && curl -L $pcre_tarball_url | tar xvz )
+
+echo "Downloading $headers_more_nginx_module_url"
+(cd nginx-${NGINX_VERSION} && curl -L $headers_more_nginx_module_url | tar xvz )
+
+echo "Downloading $zlib_url"
+(cd nginx-${NGINX_VERSION} && curl -L $zlib_url | tar xvz )
+
+echo "Downloading $uuid4_url"
+(cd nginx-${NGINX_VERSION} && curl -L $uuid4_url | tar xvz )
+
+# This will build `nginx`
+(
+  cd nginx-${NGINX_VERSION}
+  ./configure \
+    --with-pcre=pcre-${PCRE_VERSION} \
+    --with-zlib=zlib-${ZLIB_VERSION} \
+    --with-http_gzip_static_module \
+    --with-http_realip_module \
+    --with-http_ssl_module \
+    --prefix=/tmp/nginx \
+    --add-module=${temp_dir}/nginx-${NGINX_VERSION}/headers-more-nginx-module-${HEADERS_MORE_VERSION} \
+    --add-module=${temp_dir}/nginx-${NGINX_VERSION}/nginx-uuid4-module-${UUID4_VERSION}
+  make install
+)
+
+# This will build `nginx-debug`
+(
+  cd nginx-${NGINX_VERSION}
+  ./configure \
+    --with-debug \
+    --with-pcre=pcre-${PCRE_VERSION} \
+    --with-zlib=zlib-${ZLIB_VERSION} \
+    --with-http_gzip_static_module \
+    --with-http_realip_module \
+    --with-http_ssl_module \
+    --prefix=/tmp/nginx-debug \
+    --add-module=${temp_dir}/nginx-${NGINX_VERSION}/headers-more-nginx-module-${HEADERS_MORE_VERSION} \
+    --add-module=${temp_dir}/nginx-${NGINX_VERSION}/nginx-uuid4-module-${UUID4_VERSION}
+  make install
+)
+
+release_dir=$(mktemp -d /tmp/nginx.XXXXXXXXXX)
+
+cp /tmp/nginx/sbin/nginx $release_dir/nginx
+cp /tmp/nginx-debug/sbin/nginx $release_dir/nginx-debug
+cp /tmp/nginx/conf/mime.types $release_dir/mime.types
+tar -zcvf /tmp/nginx-"${STACK}".tgz -C $release_dir .
+cp /tmp/nginx-"${STACK}".tgz $1

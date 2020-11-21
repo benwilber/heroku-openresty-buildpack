@@ -1,0 +1,29 @@
+build: build-cedar-14 build-heroku-16 build-heroku-18 build-heroku-20
+
+build-cedar-14:
+	@echo "Building nginx in Docker for cedar-14..."
+	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=cedar-14" -e "NGINX_VERSION=1.9.5" -e "PCRE_VERSION=8.37" -e "HEADERS_MORE_VERSION=0.261" -w /buildpack heroku/cedar:14 scripts/build_nginx /buildpack/nginx-cedar-14.tgz
+
+build-heroku-16:
+	@echo "Building nginx in Docker for heroku-16..."
+	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=heroku-16" -e "NGINX_VERSION=1.9.5" -e "PCRE_VERSION=8.37" -e "HEADERS_MORE_VERSION=0.261" -w /buildpack heroku/heroku:16-build scripts/build_nginx /buildpack/nginx-heroku-16.tgz
+
+build-heroku-18:
+	@echo "Building nginx in Docker for heroku-18..."
+	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=heroku-18" -w /buildpack heroku/heroku:18-build scripts/build_nginx /buildpack/nginx-heroku-18.tgz
+
+build-heroku-20:
+	@echo "Building nginx in Docker for heroku-20..."
+	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=heroku-20" -w /buildpack heroku/heroku:20-build scripts/build_nginx /buildpack/nginx-heroku-20.tgz
+
+build-openresty-heroku-20:
+	@echo "Building openresty in Docker for heroku-20..."
+	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=heroku-20" -w /buildpack heroku/heroku:20-build scripts/build_openresty /buildpack/openresty-heroku-20.tgz
+
+shell-openresty-heroku-20:
+	@echo "Building openresty in Docker for heroku-20..."
+	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=heroku-20" -w /buildpack heroku/heroku:20-build bash
+
+shell:
+	@echo "Opening heroku-18 shell..."
+	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=heroku-18" -e "PORT=5000" -w /buildpack heroku/heroku:18-build bash

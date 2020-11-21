@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+OPENRESTY_DIR=/tmp/openresty
+OPENRESTY_BIN=$OPENRESTY_DIR/bin/openresty
 SOURCE_CONF="$1"
-DEST_CONF=/usr/local/openresty/nginx/conf/nginx.conf
-TEST_CONF="$(mktemp --tmpdir=/usr/local/openresty/nginx/conf --suffix=-nginx.conf.test)"
+DEST_CONF=$OPENRESTY_DIR/nginx/conf/nginx.conf
+TEST_CONF="$(mktemp --tmpdir=$OPENRESTY_DIR/nginx/conf --suffix=-nginx.conf.test)"
 
 cat <<- EOF | python - "$SOURCE_CONF" > "$TEST_CONF"
 import sys
@@ -16,10 +18,10 @@ with open(sys.argv[1]) as f:
   sys.stdout.write(rendered)
 EOF
 
-openresty -c "$TEST_CONF" -t || {
+$OPENRESTY_BIN -c "$TEST_CONF" -t || {
   cat "$TEST_CONF" >&2
   exit 1
 }
 
 mv "$TEST_CONF" "$DEST_CONF"
-exec openresty
+exec $OPENRESTY_BIN
