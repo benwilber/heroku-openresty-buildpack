@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+sleep 86400
+
+
 OPENRESTY_DIR=/tmp/openresty
 OPENRESTY_BIN=$OPENRESTY_DIR/bin/openresty
 SOURCE_CONF="$1"
