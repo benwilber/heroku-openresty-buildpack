@@ -5,16 +5,12 @@ set -euo pipefail -x
 BUILD_DIR="$1"
 CACHE_DIR="$2"
 ENV_DIR="$3"
-OPENRESTY_DIR="$BUILD_DIR"
-OPENRESTY_BIN="$OPENRESTY_DIR/bin/openresty"
+OPENRESTY_DIR="$BUILD_DIR/openresty"
 
 mkdir -p "$OPENRESTY_DIR"
-tar -zxvf "openresty-$STACK".tgz -C "$OPENRESTY_DIR"
+tar -zxvf "openresty-$STACK".tar.gz -C "$OPENRESTY_DIR"
 
-nginx_version=$("$OPENRESTY_BIN" -V 2>&1 | head -1 | awk '{print $NF}')
-echo "-----> openresty: Installed ${nginx_version}"
+echo "-----> openresty: Installed $(cat $OPENRESTY_DIR/version.txt)"
 
-mkdir -p "$BUILD_DIR/bin"
-cp bin/startopenresty "$BUILD_DIR/bin"
-chmod +x "$BUILD_DIR/bin/startopenresty"
-echo "-----> openresty: Added startopenresty to app/bin"
+cp bin/startopenresty "$BUILD_DIR/openresty/bin"
+echo "-----> openresty: Added startopenresty to openresty/bin"

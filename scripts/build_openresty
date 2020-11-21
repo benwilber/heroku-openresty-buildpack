@@ -4,6 +4,9 @@
 # image. More information on the Heroku Stack can be found
 # at https://devcenter.heroku.com/articles/stack
 
+OPENRESTY_DIR="/app/openresty"
+mkdir -p "$OPENRESTY_DIR"
+
 OPENRESTY_VERSION=${OPENRESTY_VERSION-1.19.3.1}
 PCRE_VERSION=${PCRE_VERSION-8.44}
 ZLIB_VERSION=${ZLIB_VERSION-1.2.11}
@@ -46,15 +49,16 @@ echo "Downloading $luarocks_tarball_url"
     --with-http_gzip_static_module \
     --with-http_realip_module \
     --with-http_ssl_module \
-    --prefix=/tmp/openresty \
+    --prefix="$OPENRESTY_DIR" \
     --add-module=${temp_dir}/openresty-${OPENRESTY_VERSION}/nginx-uuid4-module-${UUID4_VERSION}
   make install
   ls -la
   cd luarocks-${LUAROCKS_VERSION}
-  ./configure --prefix=/tmp/openresty/luarocks --with-lua=/tmp/openresty/luajit
+  ./configure --prefix="$OPENRESTY_DIR/luarocks" --with-lua="$OPENRESTY_DIR/luajit"
   make
   make install
 )
 
-tar -zcvf /tmp/openresty-"${STACK}".tgz -C /tmp/openresty .
-cp /tmp/openresty-"${STACK}".tgz $1
+echo "openresty/${OPENRESTY_VERSION}" > "$OPENRESTY_DIR/version.txt"
+tar -zcvf /tmp/openresty-"${STACK}".tar.gz -C "$OPENRESTY_DIR" .
+cp /tmp/openresty-"${STACK}".tar.gz "$1"
