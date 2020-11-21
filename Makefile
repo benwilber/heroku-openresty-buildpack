@@ -20,6 +20,11 @@ build-openresty-heroku-20:
 	@echo "Building openresty in Docker for heroku-20..."
 	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=heroku-20" -w /buildpack heroku/heroku:20-build scripts/build_openresty /buildpack/openresty-heroku-20.tar.gz
 
+build-openresty-heroku-18:
+	@echo "Building openresty in Docker for heroku-18..."
+	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=heroku-18" -w /buildpack heroku/heroku:18-build scripts/build_openresty /buildpack/openresty-heroku-18.tar.gz
+
+
 shell-openresty-heroku-20:
 	@echo "Building openresty in Docker for heroku-20..."
 	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=heroku-20" -w /buildpack heroku/heroku:20-build bash
