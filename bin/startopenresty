@@ -36,7 +36,7 @@ with open(sys.argv[1]) as f:
     sys.stdout.write(rendered)
   except:
     for i, line in enumerate(content.splitlines()):
-      sys.stderr.write("{0:>4}: {1}".format(i + 1, line))
+      sys.stderr.write("{0:>4}: {1}\n".format(i + 1, line))
 
     raise
 EOF
