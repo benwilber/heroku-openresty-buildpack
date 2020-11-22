@@ -28,9 +28,17 @@ from os import environ
 from jinja2 import Template
 
 with open(sys.argv[1]) as f:
-  template = Template(f.read())
-  rendered = template.render(**environ)
-  sys.stdout.write(rendered)
+  content = f.read()
+
+  try:
+    template = Template(content)
+    rendered = template.render(**environ)
+    sys.stdout.write(rendered)
+  except:
+    for i, line in enumerate(content.splitlines()):
+      sys.stderr.write("{0:>4}: {1}".format(i + 1, line))
+
+    raise
 EOF
 
 "$OPENRESTY_BIN" -c "$TEST_NGINX_CONF" -t || {
