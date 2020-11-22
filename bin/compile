@@ -17,8 +17,8 @@ echo_indented() {
   echo "       $1"
 }
 
-tar -zxf "openresty-$STACK".tar.gz -C "$BUILD_DIR"
+tar -zxvf "openresty-$STACK".tar.gz -C "$BUILD_DIR"
 
-echo_header "Installed $(cat $INSTALL_DIR/openresty-V.txt)"
+echo_header "Installed $(cat "$INSTALL_DIR/openresty-V.txt")"
 
 cp -a bin/startopenresty "$INSTALL_DIR/bin"
