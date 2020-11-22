@@ -7,7 +7,7 @@ BUILD_DIR="$1"
 CACHE_DIR="$2"
 ENV_DIR="$3"
 
-echo "-----> Installing OpenResty..."
+echo "-----> Installing OpenResty ..."
 tar -zxf "openresty-$STACK".tar.gz -C "$BUILD_DIR"
 cp -a conf/nginx.conf.default "$BUILD_DIR/openresty/nginx/conf"
 cp -a bin/startopenresty "$BUILD_DIR/openresty/bin"
@@ -28,6 +28,7 @@ fi
 
 if [[ -f "$BUILD_DIR/luarocks.txt" ]]; then
   while read rock version; do
+    echo "-----> Installing ${rock}@${version} ..."
     luarocks install "$rock" "$version"
   done < "$BUILD_DIR/luarocks.txt"
 fi
