@@ -23,17 +23,37 @@ ln -s "$BUILD_DIR/openresty" /app/openresty
 export PATH="$PATH:/app/openresty/bin:/app/openresty/luarocks/bin:/app/openresty/luajit/bin:/app/openresty/nginx/sbin"
 
 if [[ -f "$BUILD_DIR/opm.txt" ]]; then
-  while read name; do
-    echo "-----> Installing OPM package: $name ..."
-    opm get "$name" 2>&1 | fold -w 100 -s | pr -to 7
-  done < "$BUILD_DIR/opm.txt"
+  chksum="$(sha1sum "$BUILD_DIR/opm.txt" | awk '{print $1}')"
+
+  if [[ -f "$CACHE_DIR/opm-${chksum}.tar.gz" ]]; then
+    echo "-----> Installing cached OPM packages ..."
+    tar -zxf "$CACHE_DIR/opm-${chksum}.tar.gz" -C "$BUILD_DIR/openresty/site"
+  else
+    while read name; do
+      echo "-----> Installing OPM package: $name ..."
+      opm get "$name" 2>&1 | fold -w 100 -s | pr -to 7
+    done < "$BUILD_DIR/opm.txt"
+
+    echo "-----> Caching OPM packages ..."
+    tar -zcf "$CACHE_DIR/opm-${chksum}.tar.gz" -C "$BUILD_DIR/openresty/site" .
+  fi
 fi
 
 if [[ -f "$BUILD_DIR/luarocks.txt" ]]; then
-  while read rock version; do
-    echo "-----> Installing LuaRocks package: ${rock}@${version} ..."
-    luarocks install "$rock" "$version" 2>&1 | fold -w 100 -s | pr -to 7
-  done < "$BUILD_DIR/luarocks.txt"
+  chksum="$(sha1sum "$BUILD_DIR/luarocks.txt" | awk '{print $1}')"
+
+  if [[ -f "$CACHE_DIR/luarocks-${chksum}.tar.gz" ]]; then
+    echo "-----> Installing cached LuaRocks packages ..."
+    tar -zxf "$CACHE_DIR/luarocks-${chksum}.tar.gz" -C "$BUILD_DIR/openresty/luarocks"
+  else
+    while read rock version; do
+      echo "-----> Installing LuaRocks package: ${rock}@${version} ..."
+      luarocks install "$rock" "$version" 2>&1 | fold -w 100 -s | pr -to 7
+    done < "$BUILD_DIR/luarocks.txt"
+
+    echo "-----> Caching LuaRocks packages ..."
+    tar -zcf "$CACHE_DIR/luarocks-${chksum}.tar.gz" -C "$BUILD_DIR/openresty/luarocks" .
+  fi
 fi
 
 rm -f /app/openresty
