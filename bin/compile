@@ -1,27 +1,14 @@
 #!/usr/bin/env bash
 # bin/compile BUILD_DIR CACHE_DIR ENV_DIR
-set -euo pipefail -x
+set -euo pipefail
 
 BUILD_DIR="$1"
 CACHE_DIR="$2"
 ENV_DIR="$3"
 INSTALL_DIR="$BUILD_DIR/openresty"
 
-export PATH="$PATH:$INSTALL_DIR/bin:$INSTALL_DIR/luajit/bin:$INSTALL_DIR/luarocks/bin"
-
-echo_header() {
-  echo "-----> OpenResty: $1"
-}
-
-echo_indented() {
-  echo "       $1"
-}
-
 tar -zxf "openresty-$STACK".tar.gz -C "$BUILD_DIR"
-
-echo_header "Installed OpenResty"
-while read line; do
-  echo_indented "$line"
-done < "$INSTALL_DIR/openresty-V.txt"
-
 cp -a bin/startopenresty "$INSTALL_DIR/bin"
+
+echo "-----> OpenResty: Installed OpenResty"
+fold -w 80 -s < "$INSTALL_DIR/openresty-V.txt" | pr -to 7
