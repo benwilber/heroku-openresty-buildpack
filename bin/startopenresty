@@ -1,13 +1,23 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-INSTALL_DIR="$(pwd)/openresty"
-OPENRESTY_BIN=$INSTALL_DIR/bin/openresty
-SOURCE_CONF="$1"
-DEST_CONF=$INSTALL_DIR/nginx/conf/nginx.conf
-TEST_CONF="$(mktemp --tmpdir=$INSTALL_DIR/nginx/conf --suffix=-nginx.conf.test)"
+OPENRESTY_DIR="$(pwd)/openresty"
+OPENRESTY_BIN="$OPENRESTY_DIR/bin/openresty"
+SOURCE_NGINX_CONF="$(pwd)/nginx.conf"
+DEST_NGINX_CONF="$OPENRESTY_DIR/nginx/conf/nginx.conf"
+TEST_NGINX_CONF="$(mktemp --tmpdir=$OPENRESTY_DIR/nginx/conf --suffix=-nginx.conf.test)"
+LUA_APP_PATH="$(pwd)/app"
 
-cat <<- EOF | python - "$SOURCE_CONF" > "$TEST_CONF"
+while getopts "a:c:" opt; do
+  case "$opt" in
+    c) SOURCE_NGINX_CONF="$OPTARG";;
+    a) LUA_APP_PATH="$OPTARG";;
+  esac
+done
+
+export LUA_APP_PATH
+
+cat <<- EOF | python - "$SOURCE_NGINX_CONF" > "$TEST_NGINX_CONF"
 import sys
 from os import environ
 from jinja2 import Template
@@ -18,10 +28,10 @@ with open(sys.argv[1]) as f:
   sys.stdout.write(rendered)
 EOF
 
-$OPENRESTY_BIN -c "$TEST_CONF" -t || {
-  cat "$TEST_CONF" >&2
+"$OPENRESTY_BIN" -c "$TEST_NGINX_CONF" -t || {
+  cat "$TEST_NGINX_CONF" >&2
   exit 1
 }
 
-mv "$TEST_CONF" "$DEST_CONF"
+mv "$TEST_NGINX_CONF" "$DEST_NGINX_CONF"
 exec "$OPENRESTY_BIN"
