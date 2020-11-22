@@ -14,6 +14,11 @@ fold -w 80 -s < "$BUILD_DIR/openresty/openresty-V.txt" | pr -to 7
 
 mkdir -p "$BUILD_DIR/.profile.d"
 cat << "EOF" > "$BUILD_DIR/.profile.d/000-openresty-path.sh"
-export PATH="$PATH:$HOME/openresty/bin:$HOME/openresty/luarocks/bin:$HOME/openresty/luajit/bin"
+export PATH="$PATH:$HOME/openresty/bin:$HOME/openresty/luarocks/bin:$HOME/openresty/luajit/bin:$HOME/openresty/nginx/sbin"
 EOF
 chmod +x "$BUILD_DIR/.profile.d/000-openresty-path.sh"
+
+if [[ -f "$BUILD_DIR/opm.txt" ]]; then
+  ln -s "$BUILD_DIR" /app
+  xargs /app/openresty/bin/opm get < "$BUILD_DIR/opm.txt"
+fi

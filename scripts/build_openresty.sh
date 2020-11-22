@@ -45,9 +45,7 @@ luajit -v
 openresty -V
 luarocks --version
 
-opm get thibaultcha/lua-resty-jit-uuid 3scale/lua-resty-url cdbattags/lua-resty-jwt ledgetech/lua-resty-http
 luarocks install lapis
-luarocks install lua-resty-fernet
 
 openresty -V >& "$INSTALL_DIR/openresty-V.txt"
 
