@@ -6,7 +6,7 @@ OPENRESTY_BIN="$OPENRESTY_DIR/bin/openresty"
 SOURCE_NGINX_CONF="$(pwd)/nginx.conf"
 DEST_NGINX_CONF="$OPENRESTY_DIR/nginx/conf/nginx.conf"
 TEST_NGINX_CONF="$(mktemp --tmpdir=$OPENRESTY_DIR/nginx/conf --suffix=-nginx.conf.test)"
-LUA_APP_PATH="$(pwd)/app"
+LUA_APP_PATH="$(pwd)"
 
 while getopts "a:c:" opt; do
   case "$opt" in
