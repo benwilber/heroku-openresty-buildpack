@@ -11,7 +11,7 @@ echo "-----> Installing OpenResty ..."
 tar -zxf "openresty-$STACK".tar.gz -C "$BUILD_DIR"
 cp -a conf/nginx.conf.default "$BUILD_DIR/openresty/nginx/conf"
 cp -a bin/startopenresty "$BUILD_DIR/openresty/bin"
-fold -w 80 -s < "$BUILD_DIR/openresty/openresty-V.txt" | pr -to 7
+fold -w 100 -s < "$BUILD_DIR/openresty/openresty-V.txt" | pr -to 7
 
 mkdir -p "$BUILD_DIR/.profile.d"
 cat << "EOF" > "$BUILD_DIR/.profile.d/000-openresty-path.sh"
@@ -25,14 +25,14 @@ export PATH="$PATH:/app/openresty/bin:/app/openresty/luarocks/bin:/app/openresty
 if [[ -f "$BUILD_DIR/opm.txt" ]]; then
   while read name; do
     echo "-----> Installing OPM package: $name ..."
-    opm get "$name" 2>&1 | fold -w 80 -s | pr -to 7
+    opm get "$name" 2>&1 | fold -w 100 -s | pr -to 7
   done < "$BUILD_DIR/opm.txt"
 fi
 
 if [[ -f "$BUILD_DIR/luarocks.txt" ]]; then
   while read rock version; do
-    echo "-----> Installing LuaRock package: ${rock}@${version} ..."
-    luarocks install "$rock" "$version" 2>&1 | fold -w 80 -s | pr -to 7
+    echo "-----> Installing LuaRocks package: ${rock}@${version} ..."
+    luarocks install "$rock" "$version" 2>&1 | fold -w 100 -s | pr -to 7
   done < "$BUILD_DIR/luarocks.txt"
 fi
 
