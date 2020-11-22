@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # bin/compile BUILD_DIR CACHE_DIR ENV_DIR
 set -euo pipefail
+OLD_PATH="$PATH"
 
 BUILD_DIR="$1"
 CACHE_DIR="$2"
@@ -20,16 +21,16 @@ chmod +x "$BUILD_DIR/.profile.d/000-openresty-path.sh"
 
 ln -s "$BUILD_DIR/openresty" /app/openresty
 
+export PATH="$PATH:/app/openresty/bin:/app/openresty/luarocks/bin:/app/openresty/luajit/bin:/app/openresty/nginx/sbin"
 if [[ -f "$BUILD_DIR/opm.txt" ]]; then
-  PATH="$PATH:/app/openresty/bin:/app/openresty/luarocks/bin:/app/openresty/luajit/bin:/app/openresty/nginx/sbin" \
-    xargs opm get < "$BUILD_DIR/opm.txt"
+  xargs opm get < "$BUILD_DIR/opm.txt"
 fi
 
 if [[ -f "$BUILD_DIR/luarocks.txt" ]]; then
-  PATH="$PATH:/app/openresty/bin:/app/openresty/luarocks/bin:/app/openresty/luajit/bin:/app/openresty/nginx/sbin" \
-    while read line; do
-      luarocks install "$line"
-    done < "$BUILD_DIR/luarocks.txt"
+  while read line; do
+    luarocks install "$line"
+  done < "$BUILD_DIR/luarocks.txt"
 fi
 
 rm -f /app/openresty
+export PATH="$OLD_PATH"
