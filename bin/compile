@@ -50,8 +50,13 @@ if [[ -f "$BUILD_DIR/luarocks.txt" ]]; then
     tar -zxf "$CACHE_DIR/luarocks-${chksum}.tar.gz" -C "$BUILD_DIR/openresty/luarocks"
   else
     while read rock version; do
-      echo "-----> Installing LuaRocks package: ${rock}@${version} ..."
-      luarocks install "$rock" "$version" 2>&1 | fold -w 100 -s | pr -to 7
+      if [[ "$version" ]]; then
+        echo "-----> Installing LuaRocks package: ${rock}@${version} ..."
+        luarocks install "$rock" "$version" 2>&1 | fold -w 100 -s | pr -to 7
+      else
+        echo "-----> Installing LuaRocks package: ${rock} ..."
+        luarocks install "$rock" 2>&1 | fold -w 100 -s | pr -to 7
+      fi
     done < "$BUILD_DIR/luarocks.txt"
 
     echo "-----> Caching LuaRocks packages ..."
