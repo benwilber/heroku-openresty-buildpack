@@ -7,7 +7,7 @@ CACHE_DIR="$2"
 ENV_DIR="$3"
 INSTALL_DIR="$BUILD_DIR/openresty"
 
-export PATH="$PATH:$INSTALL_DIR/bin:$INSTALL_DIR/luajit/bin"
+export PATH="$PATH:$INSTALL_DIR/bin:$INSTALL_DIR/luajit/bin:$INSTALL_DIR/luarocks/bin"
 
 echo_header() {
   echo "-----> OpenResty: $1"

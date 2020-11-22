@@ -39,6 +39,8 @@ cd "$TEMP_DIR/luarocks-${LUAROCKS_VERSION}"
 make
 make install
 
+cd
+
 luajit -v
 openresty -V
 luarocks --version
