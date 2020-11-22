@@ -19,8 +19,10 @@ EOF
 chmod +x "$BUILD_DIR/.profile.d/000-openresty-path.sh"
 
 ln -s "$BUILD_DIR/openresty" /app/openresty
-export PATH="$PATH:/app/openresty/bin:/app/openresty/luarocks/bin:/app/openresty/luajit/bin:/app/openresty/nginx/sbin"
 
 if [[ -f "$BUILD_DIR/opm.txt" ]]; then
-  xargs opm get < "$BUILD_DIR/opm.txt"
+  PATH="$PATH:/app/openresty/bin:/app/openresty/luarocks/bin:/app/openresty/luajit/bin:/app/openresty/nginx/sbin" \
+    xargs opm get < "$BUILD_DIR/opm.txt"
 fi
+
+rm -f /app/openresty

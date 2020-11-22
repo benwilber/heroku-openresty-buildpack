@@ -12,7 +12,7 @@ LUAROCKS_VERSION="${LUAROCKS_VERSION-3.4.0}"
 LUAROCKS_SOURCE_URL="https://github.com/luarocks/luarocks/archive/v${LUAROCKS_VERSION}.tar.gz"
 
 TEMP_DIR="$(mktemp -d /tmp/openresty-${OPENRESTY_VERSION}.XXXXXXXXXX)"
-INSTALL_DIR="/app/openresty-${OPENRESTY_VERSION}"
+INSTALL_DIR="/app/openresty"
 
 
 curl -L "$OPENRESTY_SOURCE_URL" | tar zxv -C "$TEMP_DIR"
@@ -50,7 +50,6 @@ luarocks install lapis
 openresty -V >& "$INSTALL_DIR/openresty-V.txt"
 
 cd "$(dirname "$INSTALL_DIR")"
-ln -s "openresty-${OPENRESTY_VERSION}" openresty
 
 tar -zcvf /tmp/openresty-"${STACK}".tar.gz .
 cp /tmp/openresty-"${STACK}".tar.gz "$1"
