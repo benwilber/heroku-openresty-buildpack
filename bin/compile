@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # bin/compile BUILD_DIR CACHE_DIR ENV_DIR
-set -euo pipefail
+set -euo pipefail -x
 
 BUILD_DIR="$1"
 CACHE_DIR="$2"
