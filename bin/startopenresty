@@ -1,22 +1,27 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-OPENRESTY_DIR="$(pwd)/openresty"
+OPENRESTY_DIR="$HOME/openresty"
 OPENRESTY_BIN="$OPENRESTY_DIR/bin/openresty"
-SOURCE_NGINX_CONF="$(pwd)/nginx.conf"
-DEST_NGINX_CONF="$OPENRESTY_DIR/nginx/conf/nginx.conf"
-TEST_NGINX_CONF="$(mktemp --tmpdir=$OPENRESTY_DIR/nginx/conf --suffix=-nginx.conf.test)"
-LUA_APP_PATH="$(pwd)"
+NGINX_CONF_DIR="$OPENRESTY_DIR/nginx/conf"
+SOURCE_NGINX_CONF="$NGINX_CONF_DIR/nginx.conf.default"
+DEST_NGINX_CONF="$NGINX_CONF_DIR/nginx.conf"
+LUA_PACKAGE_PATH="$HOME/?.lua;$HOME/?/init.lua"
+
+if [[ -f "$HOME/nginx.conf" ]]; then
+  SOURCE_NGINX_CONF="$HOME/nginx.conf"
+fi
 
 while getopts "a:c:" opt; do
   case "$opt" in
     c) SOURCE_NGINX_CONF="$OPTARG";;
-    a) LUA_APP_PATH="$OPTARG";;
+    a) LUA_PACKAGE_PATH="$OPTARG";;
   esac
 done
 
-export LUA_APP_PATH
+TEST_NGINX_CONF="$(mktemp --tmpdir="$NGINX_CONF_DIR" --suffix=-nginx.conf.test)"
 
+export LUA_PACKAGE_PATH
 cat <<- EOF | python - "$SOURCE_NGINX_CONF" > "$TEST_NGINX_CONF"
 import sys
 from os import environ
