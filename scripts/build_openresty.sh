@@ -49,7 +49,7 @@ opm get thibaultcha/lua-resty-jit-uuid 3scale/lua-resty-url cdbattags/lua-resty-
 luarocks install lapis
 luarocks install lua-resty-fernet
 
-openresty -V 2>&1 > "$INSTALL_DIR/openresty-V.txt"
+openresty -V >& "$INSTALL_DIR/openresty-V.txt"
 
 cd "$(dirname "$INSTALL_DIR")"
 ln -s "openresty-${OPENRESTY_VERSION}" openresty
