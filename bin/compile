@@ -20,5 +20,6 @@ chmod +x "$BUILD_DIR/.profile.d/000-openresty-path.sh"
 
 if [[ -f "$BUILD_DIR/opm.txt" ]]; then
   ln -s "$BUILD_DIR" /app
+  ls -la /app
   xargs /app/openresty/bin/opm get < "$BUILD_DIR/opm.txt"
 fi
