@@ -20,16 +20,19 @@ EOF
 chmod +x "$BUILD_DIR/.profile.d/000-openresty-path.sh"
 
 ln -s "$BUILD_DIR/openresty" /app/openresty
-
 export PATH="$PATH:/app/openresty/bin:/app/openresty/luarocks/bin:/app/openresty/luajit/bin:/app/openresty/nginx/sbin"
+
 if [[ -f "$BUILD_DIR/opm.txt" ]]; then
-  xargs opm get < "$BUILD_DIR/opm.txt"
+  while read name; do
+    echo "-----> Installing OPM package: $name ..."
+    opm get "$name" 2>&1 | fold -w 80 -s | pr -to 7
+  done < "$BUILD_DIR/opm.txt"
 fi
 
 if [[ -f "$BUILD_DIR/luarocks.txt" ]]; then
   while read rock version; do
-    echo "-----> Installing ${rock}@${version} ..."
-    luarocks install "$rock" "$version"
+    echo "-----> Installing LuaRock package: ${rock}@${version} ..."
+    luarocks install "$rock" "$version" 2>&1 | fold -w 80 -s | pr -to 7
   done < "$BUILD_DIR/luarocks.txt"
 fi
 
