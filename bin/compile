@@ -27,8 +27,8 @@ if [[ -f "$BUILD_DIR/opm.txt" ]]; then
 fi
 
 if [[ -f "$BUILD_DIR/luarocks.txt" ]]; then
-  while read line; do
-    luarocks install "$line"
+  while read rock version; do
+    luarocks install "$rock" "$version"
   done < "$BUILD_DIR/luarocks.txt"
 fi
 
