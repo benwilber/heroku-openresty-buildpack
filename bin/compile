@@ -54,7 +54,7 @@ if [[ -f "$BUILD_DIR/luarocks.txt" ]]; then
         echo "-----> Installing LuaRocks package: ${rock}@${version} ..."
         luarocks install "$rock" "$version" 2>&1 | fold -w 100 -s | pr -to 7
       else
-        echo "-----> Installing LuaRocks package: ${rock} ..."
+        echo "-----> Installing LuaRocks package: ${rock}@latest ..."
         luarocks install "$rock" 2>&1 | fold -w 100 -s | pr -to 7
       fi
     done < "$BUILD_DIR/luarocks.txt"
