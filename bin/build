@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Build OpenResty and modules for Heroku.
+# This script is designed to run in a Heroku Stack Docker
+# image. More information on the Heroku Stack can be found
+# at https://devcenter.heroku.com/articles/stack
+set -euo pipefail
+
+OPENRESTY_SOURCE_URL="https://openresty.org/download/openresty-${OPENRESTY_VERSION}.tar.gz"
+LUAROCKS_SOURCE_URL="https://github.com/luarocks/luarocks/archive/v${LUAROCKS_VERSION}.tar.gz"
+
+TEMP_DIR="$(mktemp -d /tmp/openresty-${OPENRESTY_VERSION}.XXXXXXXXXX)"
+INSTALL_DIR="/app/openresty"
+mkdir -p "$INSTALL_DIR"
+
+curl -sSfL "$OPENRESTY_SOURCE_URL" | tar zx -C "$TEMP_DIR"
+curl -sSfL "$LUAROCKS_SOURCE_URL" | tar zx -C "$TEMP_DIR"
+
+cd "$TEMP_DIR/openresty-${OPENRESTY_VERSION}"
+./configure \
+  -j8 \
+  --with-pcre-jit \
+  --with-http_realip_module \
+  --with-http_ssl_module \
+  --prefix="$INSTALL_DIR"
+make install
+
+export PATH="$PATH:$INSTALL_DIR/bin:$INSTALL_DIR/luajit/bin:$INSTALL_DIR/luarocks/bin"
+
+cd "$TEMP_DIR/luarocks-${LUAROCKS_VERSION}"
+./configure --prefix="$INSTALL_DIR/luarocks" --with-lua="$INSTALL_DIR/luajit"
+make
+make install
+
+luajit -v
+openresty -V
+luarocks --version
+
+openresty -V >& "$INSTALL_DIR/openresty-V.txt"
+tar -zcf "$1" -C "$(dirname "$INSTALL_DIR")" .

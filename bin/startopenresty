@@ -8,10 +8,17 @@ SOURCE_NGINX_CONF="$NGINX_CONF_DIR/nginx.conf.default"
 DEST_NGINX_CONF="$NGINX_CONF_DIR/nginx.conf"
 LUA_PACKAGE_PATH="$HOME/?.lua;$HOME/?/init.lua"
 
+# If there's an nginx.conf in the root of the project directory
+# then it will be used instead of the default nginx.conf
 if [[ -f "$HOME/nginx.conf" ]]; then
   SOURCE_NGINX_CONF="$HOME/nginx.conf"
 fi
 
+# This command also can override the nginx.conf and LUA_PACKAGE_PATH
+# via the Procfile like:
+#
+# web: startopenresty -c path/to/nginx.conf -a my;custom;lua;package;path
+#
 while getopts "a:c:" opt; do
   case "$opt" in
     c) SOURCE_NGINX_CONF="$OPTARG";;

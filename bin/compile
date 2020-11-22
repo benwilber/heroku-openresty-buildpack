@@ -8,11 +8,12 @@ CACHE_DIR="$2"
 ENV_DIR="$3"
 
 echo "-----> Installing OpenResty ..."
-tar -zxf "openresty-$STACK".tar.gz -C "$BUILD_DIR"
+tar -zxf "dist/openresty-$STACK".tar.gz -C "$BUILD_DIR"
 cp -a conf/nginx.conf.default "$BUILD_DIR/openresty/nginx/conf"
 cp -a bin/startopenresty "$BUILD_DIR/openresty/bin"
 fold -w 100 -s < "$BUILD_DIR/openresty/openresty-V.txt" | pr -to 7
 
+# Add a profile.d script to add openresty tools and luarocks to PATH
 mkdir -p "$BUILD_DIR/.profile.d"
 cat << "EOF" > "$BUILD_DIR/.profile.d/000-openresty-path.sh"
 export PATH="$PATH:$HOME/openresty/bin:$HOME/openresty/luarocks/bin:$HOME/openresty/luajit/bin:$HOME/openresty/nginx/sbin"
@@ -22,6 +23,7 @@ chmod +x "$BUILD_DIR/.profile.d/000-openresty-path.sh"
 ln -s "$BUILD_DIR/openresty" /app/openresty
 export PATH="$PATH:/app/openresty/bin:/app/openresty/luarocks/bin:/app/openresty/luajit/bin:/app/openresty/nginx/sbin"
 
+# Install OPM packages from opm.txt
 if [[ -f "$BUILD_DIR/opm.txt" ]]; then
   chksum="$(sha1sum "$BUILD_DIR/opm.txt" | awk '{print $1}')"
 
@@ -39,6 +41,7 @@ if [[ -f "$BUILD_DIR/opm.txt" ]]; then
   fi
 fi
 
+# Install LuaRocks packages from luarocks.txt
 if [[ -f "$BUILD_DIR/luarocks.txt" ]]; then
   chksum="$(sha1sum "$BUILD_DIR/luarocks.txt" | awk '{print $1}')"
 

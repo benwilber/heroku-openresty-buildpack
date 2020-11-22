@@ -1,29 +1,31 @@
-build: build-cedar-14 build-heroku-16 build-heroku-18 build-heroku-20
+OPENRESTY_VERSION ?= 1.19.3.1
+LUAROCKS_VERSION ?= 3.4.0
 
-build-cedar-14:
-	@echo "Building nginx in Docker for cedar-14..."
-	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=cedar-14" -e "NGINX_VERSION=1.9.5" -e "PCRE_VERSION=8.37" -e "HEADERS_MORE_VERSION=0.261" -w /buildpack heroku/cedar:14 scripts/build_nginx /buildpack/nginx-cedar-14.tgz
+build: build-heroku-16 build-heroku-18 build-heroku-20
 
 build-heroku-16:
-	@echo "Building nginx in Docker for heroku-16..."
-	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=heroku-16" -e "NGINX_VERSION=1.9.5" -e "PCRE_VERSION=8.37" -e "HEADERS_MORE_VERSION=0.261" -w /buildpack heroku/heroku:16-build scripts/build_nginx /buildpack/nginx-heroku-16.tgz
+	@echo "Building OpenResty in Docker for heroku-16 ..."
+	@docker run -v $(shell pwd):/buildpack -w /buildpack --rm -it \
+		 -e "STACK=heroku-16" -e "OPENRESTY_VERSION=$(OPENRESTY_VERSION)" -e "LUAROCKS_VERSION=$(LUAROCKS_VERSION)" \
+		heroku/heroku:16-build bin/build /buildpack/dist/openresty-heroku-16.tar.gz
 
 build-heroku-18:
-	@echo "Building nginx in Docker for heroku-18..."
-	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=heroku-18" -w /buildpack heroku/heroku:18-build scripts/build_nginx /buildpack/nginx-heroku-18.tgz
+	@echo "Building OpenResty in Docker for heroku-18 ..."
+	@docker run -v $(shell pwd):/buildpack -w /buildpack --rm -it \
+		 -e "STACK=heroku-18" -e "OPENRESTY_VERSION=$(OPENRESTY_VERSION)" -e "LUAROCKS_VERSION=$(LUAROCKS_VERSION)" \
+		heroku/heroku:18-build bin/build /buildpack/dist/openresty-heroku-18.tar.gz
 
 build-heroku-20:
-	@echo "Building nginx in Docker for heroku-20..."
-	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=heroku-20" -w /buildpack heroku/heroku:20-build scripts/build_nginx /buildpack/nginx-heroku-20.tgz
+	@echo "Building OpenResty in Docker for heroku-20 ..."
+	@docker run -v $(shell pwd):/buildpack -w /buildpack --rm -it \
+		 -e "STACK=heroku-20" -e "OPENRESTY_VERSION=$(OPENRESTY_VERSION)" -e "LUAROCKS_VERSION=$(LUAROCKS_VERSION)" \
+		heroku/heroku:20-build bin/build /buildpack/dist/openresty-heroku-20.tar.gz
 
-build-openresty-heroku-20:
-	@echo "Building openresty in Docker for heroku-20..."
-	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=heroku-20" -w /buildpack heroku/heroku:20-build scripts/build_openresty.sh /buildpack/openresty-heroku-20.tar.gz
+shell-heroku-18:
+	@echo "Building openresty in Docker for heroku-18 ..."
+	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=heroku-18" -w /buildpack heroku/heroku:18-build bash
 
-shell-openresty-heroku-20:
-	@echo "Building openresty in Docker for heroku-20..."
+
+shell-heroku-20:
+	@echo "Building openresty in Docker for heroku-20 ..."
 	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=heroku-20" -w /buildpack heroku/heroku:20-build bash
-
-shell:
-	@echo "Opening heroku-18 shell..."
-	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=heroku-18" -e "PORT=5000" -w /buildpack heroku/heroku:18-build bash
