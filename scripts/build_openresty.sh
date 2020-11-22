@@ -45,7 +45,7 @@ luajit -v
 openresty -V
 luarocks --version
 
-luarocks install lapis
+# luarocks install lapis
 
 openresty -V >& "$INSTALL_DIR/openresty-V.txt"
 
