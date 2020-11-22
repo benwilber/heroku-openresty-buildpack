@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # bin/compile BUILD_DIR CACHE_DIR ENV_DIR
-set -euo pipefail -x
+set -euo pipefail
 
 BUILD_DIR="$1"
 CACHE_DIR="$2"
@@ -23,6 +23,13 @@ ln -s "$BUILD_DIR/openresty" /app/openresty
 if [[ -f "$BUILD_DIR/opm.txt" ]]; then
   PATH="$PATH:/app/openresty/bin:/app/openresty/luarocks/bin:/app/openresty/luajit/bin:/app/openresty/nginx/sbin" \
     xargs opm get < "$BUILD_DIR/opm.txt"
+fi
+
+if [[ -f "$BUILD_DIR/luarocks.txt" ]]; then
+  PATH="$PATH:/app/openresty/bin:/app/openresty/luarocks/bin:/app/openresty/luajit/bin:/app/openresty/nginx/sbin" \
+    while read line; do
+      luarocks install "$line"
+    done < "$BUILD_DIR/luarocks.txt"
 fi
 
 rm -f /app/openresty
