@@ -26,10 +26,10 @@ shell-heroku-16:
 	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=heroku-16" -w /buildpack heroku/heroku:16-build bash
 
 shell-heroku-18:
-	@echo "Start a Docker shell for heroku-16 ..."
+	@echo "Start a Docker shell for heroku-18 ..."
 	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=heroku-18" -w /buildpack heroku/heroku:18-build bash
 
 
 shell-heroku-20:
-	@echo "Start a Docker shell for heroku-16 ..."
+	@echo "Start a Docker shell for heroku-20 ..."
 	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=heroku-20" -w /buildpack heroku/heroku:20-build bash
