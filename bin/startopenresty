@@ -39,7 +39,7 @@ with open(sys.argv[1]) as f:
 
   try:
     template = Template(content)
-    rendered = template.render(**environ)
+    rendered = template.render(env=environ, **environ)
     sys.stdout.write(rendered)
   except:
     for i, line in enumerate(content.splitlines()):
