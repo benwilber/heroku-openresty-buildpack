@@ -21,6 +21,7 @@ cd "$TEMP_DIR/openresty-${OPENRESTY_VERSION}"
   --with-pcre-jit \
   --with-http_realip_module \
   --with-http_ssl_module \
+  --with-http_postgres_module \
   --prefix="$INSTALL_DIR"
 make install
 
