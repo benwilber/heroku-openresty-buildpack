@@ -42,8 +42,8 @@ with open(sys.argv[1]) as f:
     rendered = template.render(env=environ, **environ)
     sys.stdout.write(rendered)
   except:
-    for i, line in enumerate(content.splitlines()):
-      sys.stderr.write("{0:>4}: {1}\n".format(i + 1, line))
+    for i, line in enumerate(content.splitlines(), start=1):
+      sys.stderr.write("{0:>4}: {1}\n".format(i, line))
 
     raise
 EOF
@@ -54,4 +54,4 @@ EOF
 }
 
 mv "$TEST_NGINX_CONF" "$DEST_NGINX_CONF"
-exec "$OPENRESTY_BIN"
+exec "$OPENRESTY_BIN" -c "$DEST_NGINX_CONF"
