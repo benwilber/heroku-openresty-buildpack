@@ -37,13 +37,12 @@ Push the app to Heroku
 $ git push heroku master
 ```
 
-Visiting the app's URL in your web browser will display "Hello Lapis!"
+Visiting the app's URL in your web browser will display "Hello OpenResty!"
 
 ## Supported Heroku stacks
 
 This buildpack has been tested with the following Heroku stacks:
 
-* `heroku-16`
 * `heroku-18`
 * `heroku-20`
 
